@@ -1,0 +1,30 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(162, 200, 200);
+    height: 46rem;
+}
+.heading{
+    font-size: xx-large;
+    text-decoration: underline;
+}
+.start{
+    height: 60px;
+    width: 60px;
+}
+.questionstructure{
+    display: flex;
+    justify-content: start;
+    padding-left: 60px;
+    padding-top: 15px;
+    margin-top: 50px;
+    width: 50rem;
+    height: 12rem;
+    border: 2px solid black;
+}
+.buttongroup{
+    margin-top: 15px;
+    display: flex;
+    gap: 1rem;
+}
