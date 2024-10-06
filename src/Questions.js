@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import './Home.css'
-import questionArray from './QuestionArray.js';
+import data from './QuestionArray.js';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Slide from '@mui/material/Slide';
+import axios from 'axios';
 function Questions() {
     const [index, setIndex] = useState(0)
     const [score, setScore] = useState(0)
-    const [checked, setChecked] = React.useState(false);
+    const [checked, setChecked] = useState(false);
+    const [data,setData]=useState()
+    const [loading, setLoading] = useState(true);
     const handleNext = () => {
         if (index < 9) {
             setIndex(index + 1)
@@ -21,7 +24,7 @@ function Questions() {
         setChecked(false)
     }
     const handleInput = (e) => {
-        if (e.target.value === questionArray[index].ans) {
+        if (e.target.value === data[index].ans) {
             setScore(prevscore => prevscore + 1)
         }
     }
@@ -40,15 +43,45 @@ function Questions() {
     const handleChange = () => {
         setChecked((prev) => !prev);
     };
+    useEffect(()=>{
+         const getData=async ()=>{
+            try{
+            const res=await axios.get("https://opentdb.com/api.php?amount=10&category=9&difficulty=medium&type=multiple")
+            setData(()=>{
+                const data=res?.data?.results?.map((q)=>{
+                    return {
+                        que: q?.question,
+                        a: q?.incorrect_answers?.[0],
+                        b: q?.incorrect_answers?.[1],
+                        c: q?.incorrect_answers?.[2],
+                        d: q?.correct_answer,
+                        ans: q?.correct_answer
+                    }
+                })
+                return data
+            })
+            }
+        catch(e){
+            console.log(e)
+        }
+        finally{
+            setLoading(false)
+        }
+        }
+         getData()
+    },[])
+    if(loading){
+        return <div>Loading....</div>
+    }
     return (
         <>
             <div className='questionstructure'>
                 <h3>
-                    {index + 1}.{questionArray[index].que}<br />
-                    a.<input type='radio' name='radio' value={questionArray[index].a} onChange={(e) => handleInput(e)} />{questionArray[index].a}<br />
-                    b.<input type='radio' name='radio' value={questionArray[index].b} onChange={(e) => handleInput(e)} />{questionArray[index].b}<br />
-                    c.<input type='radio' name='radio' value={questionArray[index].c} onChange={(e) => handleInput(e)} />{questionArray[index].c}<br />
-                    d.<input type='radio' name='radio' value={questionArray[index].d} onChange={(e) => handleInput(e)} />{questionArray[index].d}<br />
+                    {index + 1}.{data[index]?.que}<br />
+                    a.<input type='radio' name='radio' value={data[index]?.a} onChange={(e) => handleInput(e)} />{data[index]?.a}<br />
+                    b.<input type='radio' name='radio' value={data[index]?.b} onChange={(e) => handleInput(e)} />{data[index]?.b}<br />
+                    c.<input type='radio' name='radio' value={data[index]?.c} onChange={(e) => handleInput(e)} />{data[index]?.c}<br />
+                    d.<input type='radio' name='radio' value={data[index]?.d} onChange={(e) => handleInput(e)} />{data[index]?.d}<br />
                 </h3>
             </div>
             <div className='buttongroup'>
